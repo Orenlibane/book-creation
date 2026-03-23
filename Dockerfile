@@ -6,8 +6,11 @@ RUN apt-get update \
 
 WORKDIR /app
 
+ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
+
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install --include=optional \
+  && npm install --os=linux --cpu=x64 sharp
 
 COPY . .
 
