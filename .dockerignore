@@ -1,0 +1,12 @@
+.git
+.gitignore
+.nx
+.angular
+.vscode
+node_modules
+dist
+coverage
+tmp
+storage
+*.log
+__screenshots__

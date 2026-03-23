@@ -1,0 +1,52 @@
+<main class="shell">
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">ממשק העבודה הראשון מוכן</span>
+      <h1>{{ title }}</h1>
+      <p>
+        יצרנו בסיס ליישום photobook בעברית עם Angular + Express + Prisma, כולל
+        תשתית להעלאת תמונות, ספרים, auth ויצירת PDF אסינכרונית.
+      </p>
+
+      <ul class="highlights">
+        @for (item of highlights; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+
+      <div class="actions">
+        <a
+          class="primary"
+          href="http://localhost:3333/api/health"
+          target="_blank"
+          rel="noreferrer"
+        >
+          בדיקת API
+        </a>
+        <span class="secondary">השלב הבא: בניית editor אמיתי לפי ה-UI המצורף</span>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-toolbar">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+
+      <div class="mockup-book">
+        <div class="page cover">
+          <div class="photo large"></div>
+          <div class="photo small"></div>
+          <div class="caption">הספר שלנו</div>
+        </div>
+
+        <div class="page inner">
+          <div class="text-block"></div>
+          <div class="photo wide"></div>
+          <div class="photo square"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
