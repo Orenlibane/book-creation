@@ -1,52 +1,342 @@
-<main class="shell">
-  <section class="hero">
-    <div class="hero-copy">
-      <span class="eyebrow">ממשק העבודה הראשון מוכן</span>
-      <h1>{{ title }}</h1>
+<main class="studio-shell" dir="rtl">
+  <section class="dashboard-panel panel">
+    <div class="brand-row">
+      <button class="ghost-icon" type="button" aria-label="סגירת התפריט">✕</button>
+      <div class="brand-copy">
+        <span class="brand-kicker">photobook editor</span>
+        <strong>{{ studioName }}</strong>
+      </div>
+    </div>
+
+    <header class="dashboard-hero">
+      <span class="hero-badge">ברוכים הבאים</span>
+      <h1>בואו ניצור קסם בעברית.</h1>
       <p>
-        יצרנו בסיס ליישום photobook בעברית עם Angular + Express + Prisma, כולל
-        תשתית להעלאת תמונות, ספרים, auth ויצירת PDF אסינכרונית.
+        סביבת עבודה מלאה ליצירת אלבומים, עם עריכת תמונות, טקסטים, תבניות והכנה
+        מסודרת ל־PDF מוכן לדפוס.
       </p>
+    </header>
 
-      <ul class="highlights">
-        @for (item of highlights; track item) {
-          <li>{{ item }}</li>
+    <div class="project-meta">
+      <span>אחסון מקומי מהיר</span>
+      <span>שמירה אוטומטית כל 2 שניות</span>
+    </div>
+
+    <section class="section-block">
+      <div class="section-heading">
+        <h2>הפרויקטים שלך</h2>
+        <button class="text-action" type="button">הצג הכל</button>
+      </div>
+
+      <div class="project-list">
+        @for (project of projects; track project.id) {
+          <button
+            class="project-item"
+            [class.is-active]="selectedProject().id === project.id"
+            [class.peach]="project.accent === 'peach'"
+            [class.mint]="project.accent === 'mint'"
+            type="button"
+            (click)="selectProject(project.id)"
+          >
+            <div class="project-cover">
+              <span>{{ project.title }}</span>
+            </div>
+            <div class="project-copy">
+              <strong>{{ project.title }}</strong>
+              <p>{{ project.subtitle }}</p>
+              <small>{{ project.sizeLabel }}</small>
+            </div>
+          </button>
         }
-      </ul>
+      </div>
+    </section>
 
-      <div class="actions">
-        <a
-          class="primary"
-          href="/api/health"
-          target="_blank"
-          rel="noreferrer"
-        >
-          בדיקת API
-        </a>
-        <span class="secondary">השלב הבא: בניית editor אמיתי לפי ה-UI המצורף</span>
+    <section class="section-block">
+      <div class="section-heading">
+        <h2>נתוני עבודה</h2>
+      </div>
+
+      <div class="stats-grid">
+        <div>
+          <span>עמודים כפולים</span>
+          <strong>{{ selectedProject().spreadCount }}</strong>
+        </div>
+        <div>
+          <span>מוכנות לייצוא</span>
+          <strong>{{ selectedProject().progress }}%</strong>
+        </div>
+      </div>
+    </section>
+
+    <button class="primary-cta" type="button">התחל אלבום חדש</button>
+  </section>
+
+  <section class="workspace-panel panel">
+    <header class="workspace-topbar">
+      <div class="toolbar-cluster">
+        <span class="app-chip">עורך אלבום</span>
+
+        @for (action of toolbarActions; track action.id) {
+          <button class="toolbar-button" type="button">
+            <span>{{ action.icon }}</span>
+            {{ action.label }}
+          </button>
+        }
+      </div>
+
+      <div class="toolbar-cluster compact">
+        <button class="status-pill" type="button">נשמר לפני רגע</button>
+        <button class="export-pill" type="button">הורד PDF</button>
+      </div>
+    </header>
+
+    <section class="workspace-stage">
+      <aside class="thumbnails-rail">
+        @for (spread of spreads; track spread.id) {
+          <button
+            class="thumbnail-item"
+            [class.is-active]="selectedSpread().id === spread.id"
+            type="button"
+            (click)="selectSpread(spread.id)"
+          >
+            <span class="thumbnail-label">{{ spread.label }}</span>
+            <strong>{{ spread.title }}</strong>
+            <small>{{ spread.status }}</small>
+          </button>
+        }
+      </aside>
+
+      <div class="book-stage">
+        <div class="spread-header">
+          <div>
+            <span class="section-tag">{{ selectedSpread().label }}</span>
+            <h2>{{ selectedSpread().title }}</h2>
+          </div>
+
+          <div class="spread-meta">
+            <span>תבנית: {{ selectedTemplate().name }}</span>
+            <span>נבחרה תמונה: {{ selectedMedia().title }}</span>
+          </div>
+        </div>
+
+        <div class="book-surface">
+          <div class="page-page left-page">
+            <div class="frame sun-frame large-landscape">
+              <div class="photo-surface sunrise"></div>
+            </div>
+
+            <div class="headline-block">
+              <span>המסע שלנו לצפון</span>
+              <small>חיפה / נוף גלילי / זיכרונות של קיץ</small>
+            </div>
+
+            <div class="frame tilted portrait-frame">
+              <div class="photo-surface forest"></div>
+            </div>
+          </div>
+
+          <div class="book-spine"></div>
+
+          <div class="page-page right-page">
+            <div class="frame hero-square">
+              <div class="photo-surface selected-tone {{ selectedMedia().tone }}"></div>
+            </div>
+
+            <div class="story-block">
+              <h3>רגעים מאושרים</h3>
+              <p>
+                בלחיצה אחת אפשר להחליף פריסה, לגרור תמונה חדשה, לעדכן טקסט ולהמשיך
+                ישירות לייצוא.
+              </p>
+            </div>
+
+            <div class="mini-gallery">
+              <div class="mini-frame sky"></div>
+              <div class="mini-frame blush"></div>
+              <div class="mini-frame sunset"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="canvas-toolbar">
+          @for (action of quickTools; track action.id) {
+            <button class="mini-tool" type="button">
+              <span>{{ action.icon }}</span>
+              {{ action.label }}
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <section class="inspector-panel panel">
+    <header class="panel-header">
+      <div>
+        <span class="section-tag">ספריה ועריכה</span>
+        <h2>בחירת תכנים</h2>
+      </div>
+      <button class="ghost-icon" type="button" aria-label="פתיחת הגדרות">⚙</button>
+    </header>
+
+    <div class="inspector-tabs">
+      <button
+        class="tab-button"
+        [class.is-active]="activeInspectorTab() === 'templates'"
+        type="button"
+        (click)="setInspectorTab('templates')"
+      >
+        תבניות
+      </button>
+      <button
+        class="tab-button"
+        [class.is-active]="activeInspectorTab() === 'media'"
+        type="button"
+        (click)="setInspectorTab('media')"
+      >
+        תמונות
+      </button>
+      <button
+        class="tab-button"
+        [class.is-active]="activeInspectorTab() === 'text'"
+        type="button"
+        (click)="setInspectorTab('text')"
+      >
+        טקסט
+      </button>
+      <button
+        class="tab-button"
+        [class.is-active]="activeInspectorTab() === 'style'"
+        type="button"
+        (click)="setInspectorTab('style')"
+      >
+        עיצוב
+      </button>
+    </div>
+
+    @if (activeInspectorTab() === 'templates') {
+      <section class="section-block slim">
+        <div class="section-heading">
+          <h3>תבניות מומלצות</h3>
+        </div>
+
+        <div class="template-list">
+          @for (template of templates; track template.id) {
+            <button
+              class="template-item"
+              [class.is-active]="selectedTemplate().id === template.id"
+              type="button"
+              (click)="selectTemplate(template.id)"
+            >
+              <div class="template-preview">
+                @for (cell of template.cells; track $index) {
+                  <span [style.flex]="cell"></span>
+                }
+              </div>
+              <div class="template-copy">
+                <strong>{{ template.name }}</strong>
+                <small>{{ template.tone }}</small>
+              </div>
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    @if (activeInspectorTab() === 'media') {
+      <section class="section-block slim">
+        <div class="section-heading">
+          <h3>מדיה שהועלתה</h3>
+        </div>
+
+        <div class="media-grid">
+          @for (asset of mediaAssets; track asset.id) {
+            <button
+              class="media-item {{ asset.orientation }}"
+              [class.is-active]="selectedMedia().id === asset.id"
+              type="button"
+              (click)="selectMedia(asset.id)"
+            >
+              <span class="media-visual {{ asset.tone }}"></span>
+              <strong>{{ asset.title }}</strong>
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    @if (activeInspectorTab() === 'text') {
+      <section class="section-block slim">
+        <div class="section-heading">
+          <h3>טקסטים בעמוד</h3>
+        </div>
+
+        <div class="copy-stack">
+          <article>
+            <span>כותרת ראשית</span>
+            <strong>המסע שלנו לצפון</strong>
+          </article>
+          <article>
+            <span>כותרת משנית</span>
+            <strong>רגעים מאושרים</strong>
+          </article>
+          <article>
+            <span>פסקה</span>
+            <strong>עריכה ישירה, תמיכה מלאה בעברית וייצוא נקי לדפוס.</strong>
+          </article>
+        </div>
+      </section>
+    }
+
+    @if (activeInspectorTab() === 'style') {
+      <section class="section-block slim">
+        <div class="section-heading">
+          <h3>סטייל לדפוס</h3>
+        </div>
+
+        <ul class="style-list">
+          @for (item of typographyOptions; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </section>
+    }
+  </section>
+
+  <section class="preview-panel panel">
+    <header class="panel-header">
+      <div>
+        <span class="section-tag">preview</span>
+        <h2>תצוגה וייצוא</h2>
+      </div>
+      <button class="ghost-icon" type="button" aria-label="סגירת חלון">✕</button>
+    </header>
+
+    <div class="preview-book">
+      <div class="preview-cover">
+        <div class="cover-art">
+          <span class="cover-tag">family trip</span>
+          <strong>{{ selectedProject().title }}</strong>
+        </div>
       </div>
     </div>
 
-    <div class="mockup">
-      <div class="mockup-toolbar">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+    <div class="export-status">
+      <div class="section-heading">
+        <h3>הספר מוכן!</h3>
       </div>
-
-      <div class="mockup-book">
-        <div class="page cover">
-          <div class="photo large"></div>
-          <div class="photo small"></div>
-          <div class="caption">הספר שלנו</div>
-        </div>
-
-        <div class="page inner">
-          <div class="text-block"></div>
-          <div class="photo wide"></div>
-          <div class="photo square"></div>
-        </div>
+      <div class="progress-track">
+        <span></span>
       </div>
+      <small>{{ selectedProject().progress }}% מוכן לייצוא</small>
     </div>
+
+    <ul class="export-steps">
+      @for (step of exportSteps; track step) {
+        <li>{{ step }}</li>
+      }
+    </ul>
+
+    <button class="primary-cta wide" type="button">הורד כ־PDF להדפסה</button>
   </section>
 </main>
