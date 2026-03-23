@@ -1,4 +1,3 @@
-import { Book, Prisma } from '@prisma/client';
 import { Router } from 'express';
 import { asyncHandler } from '../../lib/async-handler';
 import { HttpError } from '../../lib/http-error';
@@ -7,14 +6,21 @@ import { toPublicStorageUrl } from '../../lib/storage';
 import { renderBook } from './book-renderer';
 import { createBookSchema, updateBookSchema } from './book.schemas';
 
-type BookResponse = Pick<
-  Book,
-  'id' | 'title' | 'status' | 'pagesLayout' | 'finalPdfPath' | 'createdAt' | 'updatedAt'
-> & {
+type BookRecord = {
+  id: string;
+  title: string;
+  status: string;
+  pagesLayout: unknown;
+  finalPdfPath: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type BookResponse = BookRecord & {
   finalPdfUrl: string | null;
 };
 
-function toBookResponse(book: Book): BookResponse {
+function toBookResponse(book: BookRecord): BookResponse {
   return {
     id: book.id,
     title: book.title,
@@ -49,7 +55,7 @@ booksRouter.post(
       data: {
         userId: req.auth.userId,
         title: title?.trim() || undefined,
-        pagesLayout: [] as Prisma.InputJsonValue,
+        pagesLayout: [],
       },
     });
 
@@ -75,7 +81,7 @@ booksRouter.put(
       where: { id: req.params.id },
       data: {
         title,
-        pagesLayout: pagesLayout as Prisma.InputJsonValue | undefined,
+        pagesLayout,
       },
     });
 

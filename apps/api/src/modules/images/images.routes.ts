@@ -1,7 +1,6 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { ImageAsset } from '@prisma/client';
 import { Router } from 'express';
 import multer from 'multer';
 import sharp from 'sharp';
@@ -9,6 +8,15 @@ import { asyncHandler } from '../../lib/async-handler';
 import { HttpError } from '../../lib/http-error';
 import { prisma } from '../../lib/prisma';
 import { toAbsoluteStoragePath, toPublicStorageUrl } from '../../lib/storage';
+
+type ImageAssetRecord = {
+  id: string;
+  userId: string;
+  filePath: string;
+  width: number;
+  height: number;
+  createdAt: Date;
+};
 
 const allowedMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const extensionByMimeType: Record<string, string> = {
@@ -33,11 +41,11 @@ const upload = multer({
   },
 });
 
-function buildThumbnailPath(asset: ImageAsset) {
+function buildThumbnailPath(asset: ImageAssetRecord) {
   return `thumbnails/${asset.userId}/${asset.id}.webp`;
 }
 
-function toImageResponse(asset: ImageAsset) {
+function toImageResponse(asset: ImageAssetRecord) {
   return {
     id: asset.id,
     filePath: asset.filePath,

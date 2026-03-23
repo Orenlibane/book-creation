@@ -28,9 +28,26 @@ export function createApp() {
   app.use(
     cors({
       origin(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin) {
           callback(null, true);
           return;
+        }
+
+        if (allowedOrigins.includes(origin)) {
+          callback(null, true);
+          return;
+        }
+
+        try {
+          const requestOrigin = new URL(origin);
+          const isRailwayPreview = requestOrigin.hostname.endsWith('.railway.app');
+
+          if (isRailwayPreview) {
+            callback(null, true);
+            return;
+          }
+        } catch {
+          // Fall through to the explicit rejection below.
         }
 
         callback(new Error('Origin is not allowed by CORS.'));

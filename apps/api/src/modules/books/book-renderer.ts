@@ -1,7 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
-import { Book } from '@prisma/client';
 import { env } from '../../config/env';
 import { prisma } from '../../lib/prisma';
 import {
@@ -10,13 +9,17 @@ import {
   toRelativeStoragePath,
 } from '../../lib/storage';
 
-type RenderableBook = Pick<Book, 'id' | 'title' | 'pagesLayout'>;
+type RenderableBook = {
+  id: string;
+  title: string;
+  pagesLayout: unknown;
+};
 
 type RenderPayload = {
   bookId: string;
   title: string;
   outputPath: string;
-  pagesLayout: Book['pagesLayout'];
+  pagesLayout: unknown;
 };
 
 export async function renderBook(book: RenderableBook) {
